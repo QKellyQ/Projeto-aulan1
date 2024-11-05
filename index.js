@@ -1,12 +1,13 @@
 import express from 'express';
 
 const app = express();
+app.use(express.urlencoded({extended: true}));
 const porta = 3000; 
 const host = 'localhost'; //ip refere-se a todas as interfaces locais(placas de rede do seu pc)
 
-app.use(express.urlencoded({extended: true}));
 
-var listaplayers = []; // lista para armazenar Jogadores cadastrados
+
+var listaplayer = []; // lista para armazenar Jogadores cadastrados
 //implementar a funcionalidade para entregar um formulario html para o cliente
 function cadastroPlayerView(req, resp) {
     resp.send(`
@@ -20,7 +21,7 @@ function cadastroPlayerView(req, resp) {
 
                 <div>
                     <h1>Cadastro de Jogador</h1>
-                    <form method="POST" action="/" class="row g-3" novalidate>
+                    <form method="POST" action="/cadastrarplayer" class="row g-3" novalidate>
                         <div class="col-md-4">
                             <label for="nome" class="form-label">*Nome (será usado no personagem)</label>
                             <input type="text" class="form-control" id="nome" name="nome" required>
@@ -115,7 +116,7 @@ function menuView(req,resp) {
 </html>`);
 }
 
-function cadastroJogador(req, resp) {
+function cadastrarplayer(req, resp) {
     //recupera dados do formulário
     const nome = req.body.nome;
     const senha = req.body.senha;
@@ -126,7 +127,7 @@ function cadastroJogador(req, resp) {
 
     const player = {nome,senha,email,classe,moral,numero};
     //adiciona jogadores a cada envio
-    listaplayers.push(player);
+    listaplayer.push(player);
     //Mostrar a Lista de jogadores já cadastrados
     resp.write(`
         <html>
@@ -149,7 +150,7 @@ function cadastroJogador(req, resp) {
                 <tbody>
                 `);
 
-                for (let i = 0; i <listaplayers.length; i++) {
+                for (let i = 0; i <listaplayer.length; i++) {
                     resp.write(`
                         <tr>
                             <td>${listaplayer[i].nome}</td>                        
@@ -175,7 +176,7 @@ function cadastroJogador(req, resp) {
 
 app.get('/',menuView);
 app.get('/cadastrarplayer', cadastroPlayerView);//envia o formulario para cadastrar o personagem
-app.post('/cadastrarplayer', cadastroJogador);
+app.post('/cadastrarplayer', cadastrarplayer);
 
 
 app.listen(porta, host, () => {
